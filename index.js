@@ -88,7 +88,8 @@ function draw() {
 		// background(80);
 		image(bg,width/2,height/2);
 		playerMovement();	
-		collision();	
+		//collision();	
+		players.collide(walls);
 		drawSprites();
 	}
 	//game over screen
@@ -99,43 +100,43 @@ function draw() {
 
 function playerMovement() {
 	// player1 move left
-	if (keyIsDown(37)&&player1.position.x>25&&!player1.overlap(walls)) {
+	if (keyIsDown(37)&&player1.position.x>25) {
 		player1.position.x -= 8;
 		direction1 = "LEFT";
 	}
 	// player1 move right
-	if (keyIsDown(39)&&player1.position.x<width-25&&!player1.overlap(walls)) {
+	if (keyIsDown(39)&&player1.position.x<width-25) {
 		player1.position.x += 8;
 		direction1 = "RIGHT"
 	}
 	// player1 move up
-	if (keyIsDown(38)&&player1.position.y>25&&!player1.overlap(walls)) {
+	if (keyIsDown(38)&&player1.position.y>25) {
 		player1.position.y -= 8;
 		direction1 = "UP"
 	}
 	// player1 move down
-	if (keyIsDown(40)&&player1.position.y<height-25&&!player1.overlap(walls)) {
+	if (keyIsDown(40)&&player1.position.y<height-25) {
 		player1.position.y += 8;
 		direction1 = "DOWN"
 	}
 
 	// player2 move left
-	if (keyIsDown(65)&&player2.position.x>25&&!player2.overlap(walls)) {
+	if (keyIsDown(65)&&player2.position.x>25) {
 		player2.position.x -= 8;
 		direction2 = "LEFT";
 	}
 	// player2 move right
-	if (keyIsDown(68)&&player2.position.x<width-25&&!player2.overlap(walls)) {
+	if (keyIsDown(68)&&player2.position.x<width-25) {
 		player2.position.x += 8;
 		direction2 = "RIGHT";
 	}
 	// player2 move up
-	if (keyIsDown(87)&&player2.position.y>25&&!player2.overlap(walls)) {
+	if (keyIsDown(87)&&player2.position.y>25) {
 		player2.position.y -= 8;
 		direction2 = "UP";
 	}
 	// player2 move down
-	if (keyIsDown(83)&&player2.position.y<height-25&&!player2.overlap(walls)) {
+	if (keyIsDown(83)&&player2.position.y<height-25) {
 		player2.position.y += 8;
 		direction2 = "DOWN";
 	}
@@ -169,18 +170,4 @@ function menu() {
 
 function gameOver() {
 	//text showing winner, time elapsed and total lives lost
-}
-
-function collision() {
-	if (player1.overlap(walls)) {
-		// decrease health slightly
-		player1.position.x = playerX+75;
-		player1.position.y = playerY;
-	}
-
-	if (player2.overlap(walls)) {
-		// decrease health slightly
-		player2.position.x = playerX;
-		player2.position.y = playerY;
-	}
 }
