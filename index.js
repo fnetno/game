@@ -14,12 +14,12 @@ var wall3;
 var wall4;
 var wall5;
 var wall6;
+var pickup;
 // the way the players were last moving
 var direction1 = "RIGHT";
 var direction2 = "LEFT";
 // player that wins
 var winner;
-
 
 
 function preload() {
@@ -28,6 +28,7 @@ function preload() {
 	laughImg = loadImage("assets/cry_laugh.png");
 	gunImg = loadImage("assets/gun.png");
 	bg = loadImage("assets/space_background.png")
+	healthImg = loadImage("assets/health.png");
 }
 
 
@@ -67,11 +68,11 @@ function setup() {
 	walls = new Group();
 	push();
 	imageMode(CORNER);	
-	wall1 = createSprite(150,120,20,100)
-	wall2 = createSprite(0,160,280,20)
-	wall3 = createSprite(450,150,20,150)
-	wall4 = createSprite(500,350,200,20)
-	wall5 = createSprite(150,350,20,100)
+	wall1 = createSprite(150,120,20,100);
+	wall2 = createSprite(0,160,280,20);
+	wall3 = createSprite(450,150,20,150);
+	wall4 = createSprite(500,350,200,20);
+	wall5 = createSprite(150,350,20,100);
 
 	walls.add(wall1);
 	walls.add(wall2);
@@ -85,6 +86,11 @@ function setup() {
 
 	// creating group for bullets
 	bullets = new Group();
+
+	//frameRate(30);
+
+	// create the health pickup
+	createPickup();
 }
 
 
@@ -109,6 +115,7 @@ function draw() {
 		players.collide(walls);
 		bullets.overlap(walls, wallsHit);
 		bullets.overlap(players, playersHit);
+		players.overlap(pickup, healthPickup);
 		// respawning players
 		if (player1.lives>0) {
 			if (player1.health<=0) {
@@ -119,6 +126,10 @@ function draw() {
 				player1.position.y = playerY;
 				// reset player's health
 				player1.health = 100;
+				// create new pickup if it's removed
+				if (pickup.removed) {
+					createPickup();
+				}
 			}
 		}
 		else {
@@ -135,6 +146,10 @@ function draw() {
 				player2.position.y = playerY;
 				// reset player's health
 				player2.health = 100;
+				// create new pickup if it's removed
+				if (pickup.removed) {
+					createPickup();
+				}
 			}
 		}
 		else {
@@ -155,6 +170,7 @@ function draw() {
 		gameOver();
 	}
 }
+
 
 function playerMovement() {
 	// player1 move left
@@ -246,6 +262,7 @@ function playerMovement() {
 	}
 }
 
+
 function keyPressed() {
 	// pressing space on main menu
 	if (keyCode === 32 && gameState == 0) {
@@ -259,6 +276,7 @@ function keyPressed() {
 	}
 }
 
+
 function hud() {
 	fill(40);
 	textSize(16);
@@ -268,6 +286,7 @@ function hud() {
 	text("Player 2 health: "+player2.health,440,20);
 	text("Lives left: "+player2.lives,440,40);
 }
+
 
 function menu() {
 	// white text displaying the name of the game and how to start
@@ -280,17 +299,20 @@ function menu() {
 	text("Press SPACE to start",width/2,height/2);
 }
 
+
 function gameOver() {
 	fill(255);
 	textSize(58);
 	textAlign(CENTER);
 	text("Player "+winner+" wins!",width/2,(height/2)-50)
 	textSize(36);
-	text(10-(player1.lives+player2.lives)+" lives were lost", width/2,height/2);
-	text("Press SPACE to continue",width/2,(height/2)+36)
+	text(10-(player1.lives+player2.lives)+" lives were lost", width/2,height/2);        
+	text("Time elapsed: x seconds", width/2, (height/2)+40);
+	text("Press SPACE to continue", width/2, (height/2)+80);
 
 	//text showing winner, time elapsed and total lives lost
 }
+
 
 function weapons() {
 	// setting player1's weapon position and direction
@@ -346,14 +368,38 @@ function weapons() {
 	}
 }
 
+
 function wallsHit(bullet, wall) {
 	bullet.remove();
 	//play sound of bullet hitting wall
 }
 
+
 function playersHit(bullet, player) {
 	bullet.remove();
 	player.health -= 20;
 	//play sound of bullet hitting player
-	//damage player
+}
+
+
+function healthPickup(player, pickup) {
+	if (player.health+40>100 && player.health<100 && !pickup.removed){
+		//play sound of pickup
+		player.health = 100;
+		pickup.remove();
+	}
+	else if (player.health <= 60 && !pickup.removed) {
+		//play sound of pickup
+		player.health += 40;
+		pickup.remove();
+	}
+	
+}
+
+function createPickup() {
+	// creating health pickup
+	pickup = createSprite(75,100,20,20);
+	pickup.addImage(healthImg);
+	pickup.rotation = 45;
+	pickup.scale = 0.04;
 }
