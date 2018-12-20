@@ -27,12 +27,19 @@ function preload() {
 	thinkImg = loadImage("assets/think.png");
 	laughImg = loadImage("assets/cry_laugh.png");
 	gunImg = loadImage("assets/gun.png");
-	bg = loadImage("assets/space_background.png")
+	bg = loadImage("assets/space_background.png");
 	healthImg = loadImage("assets/health.png");
+
+  // loading sounds
+	hitSound = loadSound("assets/bullet_hit.wav");
+	deathSound = loadSound("assets/death.wav");
+	pickupSound = loadSound("assets/pickup.flac");
 }
 
 
-function setup() { 
+function setup() {
+	console.log("Death SFX by Dan Knoflicek")
+
 	createCanvas(600, 500);
 	imageMode(CENTER);
 
@@ -121,6 +128,8 @@ function draw() {
 			if (player1.health<=0) {
 				// decrement player's lives
 				player1.lives -= 1;
+				// death sound
+				deathSound.play();
 				// reset player's position
 				player1.position.x = playerX+75;
 				player1.position.y = playerY;
@@ -141,6 +150,8 @@ function draw() {
 			if (player2.health<=0) {
 				// decrement player's lives
 				player2.lives -= 1;
+				// death sound
+				deathSound.play();
 				// reset player's position
 				player2.position.x = playerX;
 				player2.position.y = playerY;
@@ -307,8 +318,8 @@ function gameOver() {
 	text("Player "+winner+" wins!",width/2,(height/2)-50)
 	textSize(36);
 	text(10-(player1.lives+player2.lives)+" lives were lost", width/2,height/2);        
-	text("Time elapsed: x seconds", width/2, (height/2)+40);
-	text("Press SPACE to continue", width/2, (height/2)+80);
+	//text("Time elapsed: x seconds", width/2, (height/2)+40);
+	text("Press SPACE to continue", width/2, (height/2)+40);
 
 	//text showing winner, time elapsed and total lives lost
 }
@@ -378,6 +389,7 @@ function wallsHit(bullet, wall) {
 function playersHit(bullet, player) {
 	bullet.remove();
 	player.health -= 20;
+	hitSound.play();
 	//play sound of bullet hitting player
 }
 
@@ -385,16 +397,19 @@ function playersHit(bullet, player) {
 function healthPickup(player, pickup) {
 	if (player.health+40>100 && player.health<100 && !pickup.removed){
 		//play sound of pickup
+		pickupSound.play();
 		player.health = 100;
 		pickup.remove();
 	}
 	else if (player.health <= 60 && !pickup.removed) {
 		//play sound of pickup
+		pickupSound.play();
 		player.health += 40;
 		pickup.remove();
 	}
 	
 }
+
 
 function createPickup() {
 	// creating health pickup
